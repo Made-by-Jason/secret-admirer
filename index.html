@@ -210,7 +210,7 @@
             margin-top: 4px;
         }
 
-        .love-note-item {
+        .love-note-item, .clue-item {
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -221,28 +221,33 @@
             border-left: 4px solid #8b5cf6;
         }
 
-        .note-header {
+        .note-header, .clue-header {
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .note-icon {
+        .note-icon, .clue-icon {
             font-size: 18px;
         }
 
-        .note-title {
+        .note-title, .clue-title {
             font-weight: 600;
             color: #8b5cf6;
             font-size: 14px;
         }
 
-        .note-content {
+        .note-content, .clue-content {
             font-style: italic;
             color: #6b46c1;
             font-size: 13px;
             line-height: 1.4;
             padding-left: 28px;
+        }
+        
+        .clue-item {
+             background: linear-gradient(135deg, #e0f2fe, #dbeafe);
+             border-left: 4px solid #3b82f6;
         }
 
         .btn {
@@ -331,6 +336,17 @@
             font-style: italic;
             max-width: 400px;
         }
+        
+        .note-notification-clue {
+            font-size: 14px;
+            color: #3b82f6;
+            margin: 20px 0;
+            padding: 10px;
+            background: #eff6ff;
+            border-radius: 8px;
+            border-left: 3px solid #3b82f6;
+            font-weight: 500;
+        }
 
         .close-note {
             background: #8b5cf6;
@@ -412,17 +428,14 @@
             </div>
         </div>
 
-        <!-- Menu Toggle Button -->
         <button class="menu-toggle" id="menuToggle">💕</button>
 
-        <!-- Side Menu -->
         <div class="side-menu" id="sideMenu">
             <div class="menu-header">
                 <h2 class="menu-title">Love Story</h2>
                 <button class="close-menu" id="closeMenu">×</button>
             </div>
             <div class="menu-content">
-                <!-- Game Actions Section -->
                 <div class="menu-section">
                     <h3>💕 Mystery Actions</h3>
                     <button class="menu-item" id="menuLocateBtn">
@@ -439,7 +452,6 @@
                     </button>
                 </div>
 
-                <!-- Progress Section -->
                 <div class="menu-section">
                     <h3>📊 Mystery Progress</h3>
                     <div class="stats-grid">
@@ -457,7 +469,13 @@
                     </div>
                 </div>
 
-                <!-- Love Notes Collection -->
+                <div class="menu-section">
+                    <h3>🧩 Discovered Clues</h3>
+                    <div id="cluesList">
+                        <p style="color: #a855f7; font-style: italic; text-align: center;">No clues discovered yet...</p>
+                    </div>
+                </div>
+
                 <div class="menu-section">
                     <h3>💌 Discovered Love Notes</h3>
                     <div id="loveNotesList">
@@ -465,7 +483,6 @@
                     </div>
                 </div>
 
-                <!-- Game Info Section -->
                 <div class="menu-section">
                     <h3>ℹ️ About This Mystery</h3>
                     <button class="menu-item" id="howToPlayBtn">
@@ -496,6 +513,7 @@
     <div class="love-note-notification" id="loveNoteNotification">
         <h2 class="note-notification-title" id="noteTitle">💌 Love Note Discovered!</h2>
         <p class="note-notification-content" id="noteContent">You found a secret message...</p>
+        <p class="note-notification-clue" id="noteClue">And a clue...</p>
         <button class="close-note" onclick="closeLoveNoteNotification()">Keep This Memory 💕</button>
     </div>
 
@@ -507,38 +525,45 @@
         let lastPosition = null;
         let watchId = null;
         let discoveredCollection = [];
+        let discoveredCluesCollection = [];
 
-        // Love notes with progressive romantic content
+        // Love notes with progressive romantic content and clues
         const loveNoteTypes = [
             {
                 title: "First Glance",
                 content: "I still remember the first time I saw you... The way you smiled lit up the entire room. I knew in that moment that you were someone special, someone who would change my world forever. 💫",
-                icon: "👀"
+                icon: "👀",
+                clue: "My secret waits where flowers bloom. The first letter is G."
             },
             {
                 title: "Daily Thoughts",
                 content: "Every morning I wake up thinking about you. Your laugh echoes in my mind throughout the day. I find myself smiling at random moments, just remembering our conversations. You've become my favorite thought. ☀️",
-                icon: "💭"
+                icon: "💭",
+                clue: "A place of peace, a quiet space. The second letter is A."
             },
             {
                 title: "Secret Wishes",
                 content: "I wish I could tell you how I feel, but the words get stuck in my throat every time I see you. You make me nervous in the most wonderful way. I practice what I'd say to you, but you always surprise me and I forget everything. 🌙",
-                icon: "⭐"
+                icon: "⭐",
+                clue: "Where colors dance in rows so neat. The third letter is R."
             },
             {
                 title: "Hidden Feelings",
                 content: "I've been hiding these feelings for so long, but they've only grown stronger. Every time you're near, my heart races. I wonder if you can hear it beating when we're close. You're my secret happiness. 💓",
-                icon: "💝"
+                icon: "💝",
+                clue: "A busy bee might find me sweet. The fourth letter is D."
             },
             {
                 title: "Dreams of Us",
                 content: "I dream about what it would be like to hold your hand, to tell you everything I'm feeling. In my dreams, we walk together, laugh together, and I finally find the courage to say those three little words that mean everything. ✨",
-                icon: "💫"
+                icon: "💫",
+                clue: "Look for the bench, a lover's seat. The fifth letter is E."
             },
             {
                 title: "My Confession",
                 content: "I can't hide it anymore... I love you. I love your kindness, your intelligence, the way you see the world. I love how you make me want to be a better person. This game was my way of finally telling you what's been in my heart all along. Will you be mine? 💕",
-                icon: "💖"
+                icon: "💖",
+                clue: "Our story starts where paths all meet. The final letter is N."
             }
         ];
 
@@ -718,6 +743,13 @@
                 icon: note.type.icon,
                 timestamp: new Date()
             });
+            
+             // Add clue to discovered clues collection
+            discoveredCluesCollection.push({
+                clue: note.type.clue,
+                icon: '🧩',
+                timestamp: new Date()
+            });
 
             // Remove note marker from map
             if (note.marker) {
@@ -727,6 +759,7 @@
             // Update UI
             updateAllStats();
             updateLoveNotesDisplay();
+            updateCluesDisplay();
             
             // Show love note notification
             showLoveNoteNotification(note.type);
@@ -734,7 +767,11 @@
             // Update status based on progress
             const remaining = loveNotes.filter(n => !n.discovered).length;
             if (remaining === 0) {
-                updateStatus("💖 You've discovered all the love notes! Your secret admirer's heart has been fully revealed. This beautiful love story is now complete! 💕");
+                updateStatus("💖 You've discovered all the love notes and all the clues! Your secret admirer is waiting for you in the GARDEN. This beautiful love story is now complete! 💕");
+                 // Optional: Show a final reveal notification
+                setTimeout(() => {
+                    alert("Congratulations! You've solved the mystery. Your secret admirer is waiting for you in the GARDEN!");
+                }, 2000);
             } else {
                 updateStatus(`💌 Love note discovered! ${remaining} more secrets await you. Keep exploring to uncover the full story of their love! 💕`);
             }
@@ -748,6 +785,25 @@
             document.getElementById('menuNotesFound').textContent = discoveredNotes;
             document.getElementById('menuProgressPercent').textContent = `${progress}%`;
             document.getElementById('progressFill').style.width = `${progress}%`;
+        }
+        
+        function updateCluesDisplay() {
+            const cluesList = document.getElementById('cluesList');
+            
+            if (discoveredCluesCollection.length === 0) {
+                cluesList.innerHTML = '<p style="color: #a855f7; font-style: italic; text-align: center;">No clues discovered yet...</p>';
+                return;
+            }
+
+            cluesList.innerHTML = discoveredCluesCollection.map(clue => `
+                <div class="clue-item">
+                    <div class="clue-header">
+                        <span class="clue-icon">${clue.icon}</span>
+                        <span class="clue-title">Clue #${discoveredCluesCollection.indexOf(clue) + 1}</span>
+                    </div>
+                    <div class="clue-content">"${clue.clue}"</div>
+                </div>
+            `).join('');
         }
 
         function updateLoveNotesDisplay() {
@@ -772,6 +828,7 @@
         function showLoveNoteNotification(noteType) {
             document.getElementById('noteTitle').textContent = `💌 ${noteType.title}`;
             document.getElementById('noteContent').textContent = `"${noteType.content}"`;
+            document.getElementById('noteClue').innerHTML = `<b>Clue:</b> ${noteType.clue}`;
             document.getElementById('loveNoteNotification').style.display = 'block';
         }
 
@@ -806,10 +863,12 @@
             loveNotes = [];
             discoveredNotes = 0;
             discoveredCollection = [];
+            discoveredCluesCollection = [];
             
             // Update UI
             updateAllStats();
             updateLoveNotesDisplay();
+            updateCluesDisplay();
 
             // Generate new love notes if we have player location
             if (lastPosition) {
@@ -840,7 +899,7 @@
         }
 
         function showHowToPlay() {
-            updateStatus("❓ How to Play: Move just a few steps in different directions from your current spot to discover 6 hidden love notes. Each note reveals more about someone's secret feelings for you!");
+            updateStatus("❓ How to Play: Move just a few steps in different directions from your current spot to discover 6 hidden love notes. Each note reveals more about someone's secret feelings for you and a clue to find them!");
         }
 
         function showAbout() {
